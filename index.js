@@ -48,12 +48,28 @@ async function run() {
         const products = await cursor.toArray();
         res.json(products);
       });
-
+    //----------GET API SINGLE DETAILS -----------------
+    app.get("/cart/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log("id is", id);
+      const query = { _id: ObjectId(id) };
+      const product = await productsCollection.findOne(query);
+      res.send(product);
+    });
     //----------POST API ADD TO CART -----------------
     app.post("/cart", async (req, res) => {
       const cart = req.body;
       console.log(cart);
       const result = await cartCollection.insertOne(cart);
+      res.json(result);
+    });
+    //----------DELETE API FOR DELETE INTO PRODUCT -----------------
+    app.delete("/cart/:id", async (req, res) => {
+      const id = req.params.id;
+      // console.log(id);
+      const query = { _id:(id) };
+      const result = await cartCollection.deleteOne(query);
+      console.log("Delete id", result);
       res.json(result);
     });
 
