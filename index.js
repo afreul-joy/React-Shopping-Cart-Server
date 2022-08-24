@@ -26,14 +26,36 @@ async function run() {
       console.log("dbms connected");
       const database = client.db("Shopping-Cart");
       const productsCollection = database.collection("products");
+      const cartCollection = database.collection("cart");
   
-      //----------GET API ALL MEALS -----------------
+      //----------GET API ALL PRODUCTS -----------------
       app.get("/products", async (req, res) => {
         const cursor = productsCollection.find({});
         const products = await cursor.toArray();
         res.json(products);
       });
+    //----------GET API SINGLE DETAILS -----------------
+    app.get("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log("id is", id);
+      const query = { _id: ObjectId(id) };
+      const product = await productsCollection.findOne(query);
+      res.send(product);
+    });
+      //----------GET API ALL CART PRODUCTS -----------------
+      app.get("/cart", async (req, res) => {
+        const cursor = cartCollection.find({});
+        const products = await cursor.toArray();
+        res.json(products);
+      });
 
+    //----------POST API ADD TO CART -----------------
+    app.post("/cart", async (req, res) => {
+      const cart = req.body;
+      console.log(cart);
+      const result = await cartCollection.insertOne(cart);
+      res.json(result);
+    });
 
     } finally {
       // await client.close();
